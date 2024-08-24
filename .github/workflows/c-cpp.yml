@@ -1,0 +1,39 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: |
+        choco install git
+        choco install cmake
+        choco install make
+
+    - name: Install Tengine dependencies
+      run: |
+        # Example of installing dependencies, adjust as needed
+        choco install openssl
+        choco install zlib
+
+    - name: Build Tengine
+      run: |
+        mkdir build
+        cd build
+        cmake .. -G "NMake Makefiles"
+        nmake
+
+    - name: Archive artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: tengine-build
+        path: build/bin
